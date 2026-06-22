@@ -1,0 +1,52 @@
+/* ============================================================
+   是正勧告事例の「画像」マッピング（自動生成）
+   case_id -> 該当ページ画像(JPEG)のパス配列
+   出典PDFの該当ページを画像化したもの。原典は 元データ/ を参照。
+   ※ このファイルは元PDFから再生成できます（手編集は不要）。
+   ============================================================ */
+window.CASE_IMAGES = {
+  "c5-01": ["assets/images/c5-p03.jpg"],
+  "c5-02": ["assets/images/c5-p03.jpg"],
+  "c5-03": ["assets/images/c5-p04.jpg"],
+  "c5-04": ["assets/images/c5-p05.jpg"],
+  "c5-05": ["assets/images/c5-p06.jpg"],
+  "c5-06": ["assets/images/c5-p07.jpg"],
+  "c5-07": ["assets/images/c5-p08.jpg"],
+  "c5-08": ["assets/images/c5-p09.jpg"],
+  "c5-09": ["assets/images/c5-p10.jpg"],
+  "c5-10": ["assets/images/c5-p11.jpg"],
+  "c5-11": ["assets/images/c5-p12.jpg"],
+  "c5-12": ["assets/images/c5-p13.jpg"],
+  "c5-13": ["assets/images/c5-p13.jpg"],
+  "c5-14": ["assets/images/c5-p14.jpg"],
+  "c5-15": ["assets/images/c5-p15.jpg"],
+  "c5-16": ["assets/images/c5-p16.jpg"],
+  "c5-17": ["assets/images/c5-p16.jpg"],
+  "c5-18": ["assets/images/c5-p17.jpg"],
+  "c5-19": ["assets/images/c5-p18.jpg"],
+  "c5-20": ["assets/images/c5-p18.jpg"],
+  "c5-21": ["assets/images/c5-p19.jpg"],
+  "c5-22": ["assets/images/c5-p19.jpg"],
+  "c5-23": ["assets/images/c5-p20.jpg"],
+  "c6-01": ["assets/images/c6-p03.jpg"],
+  "c6-02": ["assets/images/c6-p03.jpg"],
+  "c6-03": ["assets/images/c6-p04.jpg", "assets/images/c6-p05.jpg"],
+  "c6-04": ["assets/images/c6-p06.jpg", "assets/images/c6-p07.jpg"],
+  "c6-05": ["assets/images/c6-p08.jpg"],
+  "c6-06": ["assets/images/c6-p08.jpg"],
+  "c6-07": ["assets/images/c6-p09.jpg", "assets/images/c6-p10.jpg"],
+  "c6-08": ["assets/images/c6-p11.jpg"],
+  "c6-09": ["assets/images/c6-p12.jpg"],
+  "c6-10": ["assets/images/c6-p12.jpg"],
+  "c6-11": ["assets/images/c6-p13.jpg"],
+  "c6-12": ["assets/images/c6-p13.jpg"],
+  "c6-13": ["assets/images/c6-p14.jpg"],
+  "c6-14": ["assets/images/c6-p14.jpg", "assets/images/c6-p15.jpg"],
+  "c6-15": ["assets/images/c6-p16.jpg"],
+  "c6-16": ["assets/images/c6-p17.jpg"],
+  "c6-17": ["assets/images/c6-p17.jpg"],
+  "c6-18": ["assets/images/c6-p18.jpg"],
+  "c6-19": ["assets/images/c6-p18.jpg"],
+  "c6-20": ["assets/images/c6-p19.jpg"],
+  "c6-21": ["assets/images/c6-p20.jpg"]
+};

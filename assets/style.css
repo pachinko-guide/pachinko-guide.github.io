@@ -147,6 +147,36 @@ body{
 .card-toggle::after{content:" ▾"}
 .card.open .card-toggle::after{content:" ▴"}
 
+.badge.img{background:#e6f6ec;color:#1f8a4c}
+
+/* ---- 事例の画像 ---- */
+.case-imgs{margin-top:12px}
+.case-imgs .refs-label{display:block;margin-bottom:6px;font-size:.74rem;color:var(--ink-sub);font-weight:700}
+.thumbs{display:flex;flex-wrap:wrap;gap:10px}
+.thumb{
+  width:150px;height:150px;object-fit:cover;object-position:top center;
+  border:1px solid var(--line);border-radius:8px;cursor:zoom-in;
+  background:#fff;box-shadow:0 1px 4px rgba(20,30,50,.08);transition:transform .12s;
+}
+.thumb:hover{transform:scale(1.03);border-color:var(--case)}
+
+.lightbox{
+  position:fixed;inset:0;z-index:100;
+  display:none;align-items:center;justify-content:center;
+  background:rgba(15,20,30,.82);padding:24px;
+}
+.lightbox.show{display:flex}
+.lb-img{
+  max-width:95vw;max-height:92vh;object-fit:contain;
+  background:#fff;border-radius:6px;box-shadow:0 10px 40px rgba(0,0,0,.5);
+}
+.lb-close{
+  position:absolute;top:16px;right:20px;
+  width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.92);color:#222;font-size:1.5rem;line-height:1;
+}
+.lb-close:hover{background:#fff}
+
 mark{background:#fff3a3;color:inherit;padding:0 1px;border-radius:2px}
 
 .empty{

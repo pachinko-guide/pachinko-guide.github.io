@@ -88,6 +88,9 @@
 
   function card(r, terms) {
     var isQa = r.type === "qa";
+    var imgs = (r.images && r.images.length) ? r.images
+             : (window.CASE_IMAGES && CASE_IMAGES[r.id]) ? CASE_IMAGES[r.id]
+             : [];
     var el = document.createElement("article");
     el.className = "card type-" + r.type;
 
@@ -97,6 +100,7 @@
         '<span class="badge src">' + escapeHtml(r.source) + '</span>' +
         (r.no ? '<span class="badge no">' + escapeHtml(r.no) + '</span>' : '') +
         (r.period ? '<span class="badge period">' + escapeHtml(r.period) + '</span>' : '') +
+        (imgs.length ? '<span class="badge img">📷 画像あり</span>' : '') +
       '</div>';
 
     var title = '<h2 class="card-title">' + hl(r.title, terms) + '</h2>';
@@ -110,11 +114,20 @@
     var catTag = '<div class="refs"><span class="refs-label">分類</span>' +
                  '<span class="ref-tag">' + escapeHtml(r.category) + '</span></div>';
 
+    var imgHtml = imgs.length
+      ? '<div class="case-imgs"><span class="refs-label">該当広告（原典PDFの該当ページ）</span><div class="thumbs">' +
+          imgs.map(function (src) {
+            return '<img class="thumb" loading="lazy" src="' + escapeHtml(src) +
+                   '" alt="是正勧告事例の該当広告">';
+          }).join("") +
+        '</div></div>'
+      : '';
+
     var body =
       '<div class="card-body">' +
         (isQa ? '<span class="answer-label">回答</span>' : '') +
         '<p class="desc">' + hl(r.body || "", terms) + '</p>' +
-        catTag + refsHtml +
+        imgHtml + catTag + refsHtml +
       '</div>' +
       '<span class="card-toggle">詳しく見る</span>';
 
@@ -123,10 +136,35 @@
     var toggle = function () { el.classList.toggle("open"); };
     el.querySelector(".card-title").addEventListener("click", toggle);
     el.querySelector(".card-toggle").addEventListener("click", toggle);
+    // サムネクリックで拡大（カードの開閉とは独立）
+    el.querySelectorAll(".thumb").forEach(function (im) {
+      im.addEventListener("click", function (e) { e.stopPropagation(); openLightbox(im.src); });
+    });
 
     // 検索中は自動で開く
     if (terms.length) el.classList.add("open");
     return el;
+  }
+
+  /* ---------------- 画像の拡大表示（ライトボックス） ---------------- */
+  var $lb;
+  function openLightbox(src) {
+    if (!$lb) {
+      $lb = document.createElement("div");
+      $lb.className = "lightbox";
+      $lb.innerHTML = '<button class="lb-close" aria-label="閉じる">×</button><img class="lb-img" alt="">';
+      document.body.appendChild($lb);
+      $lb.addEventListener("click", function (e) {
+        if (e.target === $lb || e.target.classList.contains("lb-close")) closeLightbox();
+      });
+      document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeLightbox(); });
+    }
+    $lb.querySelector(".lb-img").src = src;
+    $lb.classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function closeLightbox() {
+    if ($lb) { $lb.classList.remove("show"); document.body.style.overflow = ""; }
   }
 
   /* ---------------- ユーティリティ ---------------- */
