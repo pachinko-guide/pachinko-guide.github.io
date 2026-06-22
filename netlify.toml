@@ -1,0 +1,11 @@
+# Netlify 設定（Git連携デプロイ用）
+# ビルド工程なしの静的サイト。リポジトリ直下をそのまま公開する。
+[build]
+  publish = "."
+  command = ""
+
+# 検索エンジン拒否（URLを知る人だけがアクセスできる状態を維持）
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
