@@ -9,6 +9,14 @@
 
   var RECORDS = (window.RECORDS || []).slice();
 
+  // 種別ごとの表示メタ（バッジ名・クラス・画像見出し）
+  var TYPE_META = {
+    qa:        { label: "Q&A",            cls: "qa",        imgLabel: "" },
+    case:      { label: "是正勧告事例",     cls: "case",      imgLabel: "該当広告（原典PDFの該当ページ）" },
+    guideline: { label: "ガイドライン本文", cls: "guideline", imgLabel: "" },
+    appendix:  { label: "別紙（具体例）",   cls: "appendix",  imgLabel: "具体例の図版（別紙の該当ページ）" }
+  };
+
   // ---- DOM ----
   var $q = document.getElementById("q");
   var $clear = document.getElementById("clear");
@@ -94,13 +102,6 @@
     list.forEach(function (r) { frag.appendChild(card(r, terms)); });
     $results.appendChild(frag);
   }
-
-  var TYPE_META = {
-    qa:        { label: "Q&A",            cls: "qa",        imgLabel: "" },
-    case:      { label: "是正勧告事例",     cls: "case",      imgLabel: "該当広告（原典PDFの該当ページ）" },
-    guideline: { label: "ガイドライン本文", cls: "guideline", imgLabel: "" },
-    appendix:  { label: "別紙（具体例）",   cls: "appendix",  imgLabel: "具体例の図版（別紙の該当ページ）" }
-  };
 
   function card(r, terms) {
     var meta = TYPE_META[r.type] || TYPE_META.case;
