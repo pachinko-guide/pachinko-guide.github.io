@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>広告セルフチェック｜広告宣伝ガイドライン</title>
+  <meta name="description" content="ポスター画像の文字を読み取り、広告宣伝ガイドラインの危険ワードを簡易チェックする自己点検ツール。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <nav class="topnav">
+        <a href="index.html">🔍 検索DB</a>
+        <a href="check.html" class="active">🧪 広告セルフチェック</a>
+      </nav>
+      <h1>広告セルフチェック（簡易）</h1>
+      <p class="lead">ポスター等の画像を読み込み、<strong>文字</strong>からガイドラインの危険ワードを点検します。</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- 注意書き -->
+    <div class="disclaimer">
+      ⚠️ <strong>これは自己チェックの補助ツールです。</strong>
+      文字（OCR）だけを見て危険ワードを拾うもので、<u>図柄・絵柄・レインボー柄などの示唆は判定できません</u>。
+      結果はOK/NGの断定ではありません。<strong>最終判断は必ず原典（ガイドライン）と所轄・遊協にご確認ください。</strong>
+    </div>
+
+    <!-- アップロード -->
+    <section id="drop" class="dropzone">
+      <input type="file" id="file" accept="image/*" hidden>
+      <div class="dz-inner">
+        <div class="dz-icon">🖼️</div>
+        <p><button type="button" id="pick" class="btn">画像を選ぶ</button> または ここにドラッグ＆ドロップ／貼り付け（⌘V）</p>
+        <p class="dz-note">ポスター・POP・SNS投稿などの画像（JPG/PNG）。画像はあなたのブラウザ内だけで処理され、どこにも送信されません。</p>
+      </div>
+    </section>
+
+    <!-- プレビュー＆実行 -->
+    <section id="work" hidden>
+      <div class="work-row">
+        <img id="preview" alt="読み込んだ画像">
+        <div class="work-side">
+          <button type="button" id="run" class="btn btn-primary">この画像をチェック</button>
+          <button type="button" id="reset" class="btn">別の画像にする</button>
+          <p id="status" class="status"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 結果 -->
+    <section id="result" hidden></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>出典：ホール関係4団体 公表資料／ 判定は文字ベースの簡易チェックです。</p>
+      <p class="note">OCR（文字読み取り）は <a href="https://tesseract.projectnaptha.com/" target="_blank" rel="noopener">Tesseract.js</a> を使用（無料・ブラウザ内処理）。派手なデザインのポスターは読み取り精度が落ちる場合があります。</p>
+    </div>
+  </footer>
+
+  <!-- OCRライブラリ（CDN・無料） -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- ルール辞書 -->
+  <script src="data/check_rules.js"></script>
+  <!-- チェック本体 -->
+  <script src="assets/check.js"></script>
+</body>
+</html>

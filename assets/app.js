@@ -55,6 +55,15 @@
     render();
   });
 
+  // ---- URLパラメータ ?q= で検索語を初期化（チェックページからの遷移用）----
+  (function initFromUrl() {
+    try {
+      var p = new URLSearchParams(location.search);
+      var q = p.get("q");
+      if (q) { state.q = q.trim(); $q.value = state.q; }
+    } catch (e) {}
+  })();
+
   // ---- 初回描画 ----
   render();
 
