@@ -109,6 +109,8 @@ body{
 }
 .card.type-qa{border-left-color:var(--qa)}
 .card.type-case{border-left-color:var(--case)}
+.card.type-guideline{border-left-color:#1f8a4c}
+.card.type-appendix{border-left-color:#7a4fd0}
 
 .card-head{
   display:flex;flex-wrap:wrap;align-items:center;gap:8px;
@@ -120,6 +122,8 @@ body{
 }
 .badge.qa{background:var(--qa-bg);color:var(--brand-dark)}
 .badge.case{background:var(--case-bg);color:#b23a22}
+.badge.guideline{background:#e6f6ec;color:#1f7a45}
+.badge.appendix{background:#efe9fb;color:#5a37a8}
 .badge.src{background:#eef1f5;color:#5b6675}
 .badge.no{background:#f2f4f7;color:#3a4452}
 .badge.period{background:#fff;border:1px solid var(--line);color:#7a8493;font-weight:600}

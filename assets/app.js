@@ -95,7 +95,15 @@
     $results.appendChild(frag);
   }
 
+  var TYPE_META = {
+    qa:        { label: "Q&A",            cls: "qa",        imgLabel: "" },
+    case:      { label: "是正勧告事例",     cls: "case",      imgLabel: "該当広告（原典PDFの該当ページ）" },
+    guideline: { label: "ガイドライン本文", cls: "guideline", imgLabel: "" },
+    appendix:  { label: "別紙（具体例）",   cls: "appendix",  imgLabel: "具体例の図版（別紙の該当ページ）" }
+  };
+
   function card(r, terms) {
+    var meta = TYPE_META[r.type] || TYPE_META.case;
     var isQa = r.type === "qa";
     var imgs = (r.images && r.images.length) ? r.images
              : (window.CASE_IMAGES && CASE_IMAGES[r.id]) ? CASE_IMAGES[r.id]
@@ -105,7 +113,7 @@
 
     var head =
       '<div class="card-head">' +
-        '<span class="badge ' + (isQa ? "qa" : "case") + '">' + (isQa ? "Q&amp;A" : "是正勧告事例") + '</span>' +
+        '<span class="badge ' + meta.cls + '">' + escapeHtml(meta.label) + '</span>' +
         '<span class="badge src">' + escapeHtml(r.source) + '</span>' +
         (r.no ? '<span class="badge no">' + escapeHtml(r.no) + '</span>' : '') +
         (r.period ? '<span class="badge period">' + escapeHtml(r.period) + '</span>' : '') +
@@ -124,10 +132,10 @@
                  '<span class="ref-tag">' + escapeHtml(r.category) + '</span></div>';
 
     var imgHtml = imgs.length
-      ? '<div class="case-imgs"><span class="refs-label">該当広告（原典PDFの該当ページ）</span><div class="thumbs">' +
+      ? '<div class="case-imgs"><span class="refs-label">' + escapeHtml(meta.imgLabel || "画像") + '</span><div class="thumbs">' +
           imgs.map(function (src) {
             return '<img class="thumb" loading="lazy" src="' + escapeHtml(src) +
-                   '" alt="是正勧告事例の該当広告">';
+                   '" alt="該当する広告・具体例の画像">';
           }).join("") +
         '</div></div>'
       : '';
