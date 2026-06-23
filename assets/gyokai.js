@@ -68,6 +68,36 @@
   $q.addEventListener("input", applySearch);
   $clear.addEventListener("click", function () { $q.value = ""; applySearch(); $q.focus(); });
 
+  // ── 各カードをクリックで Google 検索（新しいタブ） ──
+  [].slice.call(document.querySelectorAll(".card")).forEach(function (card) {
+    var h3 = card.querySelector("h3");
+    if (!h3) return;
+    var term = h3.textContent.trim();
+    var url = "https://www.google.com/search?q=" + encodeURIComponent(term + " パチンコ");
+
+    // 既存リンク（広告DBへのリンク等）はカードクリックと二重発火させない
+    [].slice.call(card.querySelectorAll("a")).forEach(function (a) {
+      a.addEventListener("click", function (e) { e.stopPropagation(); });
+    });
+
+    // 見える案内リンクを各カード末尾に追加
+    var g = document.createElement("a");
+    g.className = "glink";
+    g.href = url; g.target = "_blank"; g.rel = "noopener";
+    g.textContent = "🔍 Googleで調べる →";
+    g.addEventListener("click", function (e) { e.stopPropagation(); });
+    card.appendChild(g);
+
+    // カード本体クリックでも Google 検索（テキスト選択中は無視）
+    card.style.cursor = "pointer";
+    card.title = "クリックで「" + term + "」をGoogle検索";
+    card.addEventListener("click", function () {
+      var sel = window.getSelection && String(window.getSelection());
+      if (sel) return; // 文章を選択しているだけのときは開かない
+      window.open(url, "_blank", "noopener");
+    });
+  });
+
   // ── 相関図ノードのクリック ──
   var svg = document.querySelector(".diagram-wrap svg");
   if (svg) {
