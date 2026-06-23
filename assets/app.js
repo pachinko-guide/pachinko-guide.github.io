@@ -63,12 +63,29 @@
     render();
   });
 
-  // ---- URLパラメータ ?q= で検索語を初期化（チェックページからの遷移用）----
+  // ---- URLパラメータで初期化（他ページからの遷移用）----
+  // 例: ?q=時差開店 / ?type=guideline / ?source=ガイドライン本文(第3版)
   (function initFromUrl() {
     try {
       var p = new URLSearchParams(location.search);
       var q = p.get("q");
       if (q) { state.q = q.trim(); $q.value = state.q; }
+
+      var ty = p.get("type");
+      if (ty) {
+        var tb = $typeChips.querySelector('[data-type="' + ty + '"]');
+        if (tb) { state.type = ty; setActive($typeChips, tb); }
+      }
+
+      var src = p.get("source");
+      if (src) {
+        var sb = [].slice.call($sourceChips.querySelectorAll(".chip")).filter(function (b) {
+          return b.dataset.source === src;
+        })[0];
+        if (sb) { state.source = src; setActive($sourceChips, sb); }
+      }
+
+      if (ty || src) refreshCategoryOptions();
     } catch (e) {}
   })();
 
