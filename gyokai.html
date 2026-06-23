@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>パチンコ業界マップ｜団体・関係者の全体図と検索</title>
+<meta name="description" content="パチンコ業界の規制当局・メーカー・販社・ホール団体・三店方式・ユーザーの全体相関図と、各団体を検索・深掘りできるページ。">
+<meta name="robots" content="noindex, nofollow">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    background: #0f1117; color: #e0e0e0; line-height: 1.7;
+  }
+
+  /* ── ヘッダー＆ナビ ── */
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 26px 24px 28px; text-align: center; border-bottom: 2px solid #e94560;
+  }
+  .topnav { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+  .topnav a {
+    color:rgba(255,255,255,.85); text-decoration:none; font-size:.84rem; font-weight:600;
+    padding:6px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.3); transition:all .12s;
+  }
+  .topnav a:hover { background:rgba(255,255,255,.15); }
+  .topnav a.active { background:#e94560; border-color:#e94560; color:#fff; }
+  header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 8px; }
+  header p  { color: #a0aec0; font-size: 0.9rem; }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 28px 16px 80px; }
+
+  /* ── 検索 ── */
+  .search-area { margin-bottom: 8px; }
+  .search-box { position: relative; display:flex; align-items:center; max-width: 620px; margin: 0 auto; }
+  .search-box input {
+    width:100%; font-size:1rem; padding:13px 42px 13px 16px;
+    border:2px solid #2d3748; border-radius:10px; background:#1a1f2e; color:#e0e0e0; outline:none;
+  }
+  .search-box input:focus { border-color:#e94560; }
+  #clear {
+    position:absolute; right:8px; border:none; background:#2d3748; color:#cbd5e0;
+    width:28px; height:28px; border-radius:50%; font-size:1.1rem; cursor:pointer;
+  }
+  .search-hint { text-align:center; color:#718096; font-size:.8rem; margin-top:8px; }
+  .count { text-align:center; color:#a0aec0; font-size:.82rem; margin:10px 0 0; min-height:1.2em; }
+
+  .section-title {
+    font-size: 1.3rem; color: #e94560; border-left: 4px solid #e94560;
+    padding-left: 12px; margin: 44px 0 18px;
+  }
+
+  /* ── 相関図 (SVG) ── */
+  .diagram-wrap {
+    background: #13192a; border: 1px solid #2d3748; border-radius: 12px;
+    padding: 24px 12px; overflow-x: auto; margin-bottom: 16px;
+  }
+  .diagram-wrap svg { display: block; margin: 0 auto; }
+  .diagram-wrap svg text { pointer-events: none; }      /* クリックは下のノードへ通す */
+  .diagram-wrap svg .node { cursor: pointer; }
+  .diagram-wrap svg .node:hover { filter: brightness(1.25); }
+  .diagram-tip { text-align:center; color:#63b3ed; font-size:.82rem; margin: 4px 0 10px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; justify-content: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #a0aec0; }
+  .legend-box { width: 18px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── カード一覧 ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .card {
+    background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px;
+    padding: 18px 20px; border-top: 3px solid var(--accent, #4299e1);
+    scroll-margin-top: 90px; transition: box-shadow .2s, border-color .2s;
+  }
+  .card h3 { font-size: 1rem; color: #fff; margin-bottom: 4px; }
+  .card .abbr { font-size: 0.78rem; color: var(--accent, #4299e1); font-weight: bold; margin-bottom: 10px; }
+  .card p { font-size: 0.85rem; color: #b0bec5; }
+  .card.flash { box-shadow: 0 0 0 3px #e94560, 0 0 24px rgba(233,69,96,.4); border-color:#e94560; }
+  .xlink {
+    display:inline-block; margin-top:12px; font-size:.8rem; font-weight:bold;
+    color:#fbd38d; text-decoration:none; border:1px solid #7b4f12; background:#2a1f0a;
+    padding:5px 11px; border-radius:8px;
+  }
+  .xlink:hover { background:#3a2a0c; }
+
+  .tag { display:inline-block; padding:2px 8px; border-radius:20px; font-size:0.7rem; font-weight:bold; margin-bottom:6px; }
+
+  .santen-wrap {
+    background: #13192a; border: 1px solid #2d3748; border-radius: 12px;
+    padding: 24px 12px; overflow-x: auto; margin-bottom: 16px;
+  }
+
+  .relation-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .relation-item {
+    background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px; padding: 14px 16px;
+    scroll-margin-top: 90px;
+  }
+  .relation-item h4 { color: #ffd700; font-size: 0.9rem; margin-bottom: 6px; }
+  .relation-item p  { font-size: 0.82rem; color: #b0bec5; }
+
+  .arrow-label { font-size: 0.7rem; fill: #a0aec0; }
+  .note { font-size: 0.82rem; color: #718096; margin-top: 12px; padding-left: 12px; border-left: 3px solid #4a5568; }
+  .empty { text-align:center; color:#718096; padding:30px; display:none; }
+  mark { background:#e9af30; color:#1a1a1a; padding:0 2px; border-radius:2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="topnav">
+    <a href="index.html">🔍 検索DB</a>
+    <a href="check.html">🧪 広告セルフチェック</a>
+    <a href="gyokai.html" class="active">🗺️ 業界マップ</a>
+  </nav>
+  <h1>🎰 パチンコ業界 団体・関係者マップ</h1>
+  <p>警察 ／ メーカー ／ 販社 ／ ホール ／ 業界横断団体 ／ 政治団体 ／ ユーザー — 全関係者の役割と相関</p>
+</header>
+
+<div class="container">
+
+  <!-- ── 検索 ── -->
+  <div class="search-area">
+    <div class="search-box">
+      <input type="search" id="q" placeholder="団体名・キーワードで検索（例: 警察庁、保通協、三店方式、依存症…）" autocomplete="off">
+      <button id="clear" type="button" aria-label="クリア">×</button>
+    </div>
+    <p class="search-hint">下の全体図のマスをクリックすると、その団体の解説までジャンプします。</p>
+    <p class="count" id="count"></p>
+  </div>
+
+  <!-- ─────────────────── 相関図 ─────────────────── -->
+  <div class="section-title">📊 業界全体の相関図</div>
+  <p class="diagram-tip">▼ 図の各マスはクリックできます（該当の解説カードへ移動）</p>
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 1000 760" width="980" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#718096"/></marker>
+        <marker id="arr-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#e94560"/></marker>
+        <marker id="arr-gold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#d4a017"/></marker>
+        <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4299e1"/></marker>
+        <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#48bb78"/></marker>
+      </defs>
+
+      <!-- ゾーン背景 -->
+      <rect x="10" y="10" width="280" height="180" rx="10" fill="#1a0a0a" stroke="#e94560" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="20" y="30" fill="#e94560" font-size="11" font-weight="bold">【規制・監督当局】</text>
+      <rect x="360" y="10" width="280" height="180" rx="10" fill="#0a1a0a" stroke="#48bb78" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="370" y="30" fill="#48bb78" font-size="11" font-weight="bold">【メーカー（製造）】</text>
+      <rect x="700" y="10" width="285" height="180" rx="10" fill="#0a0a1a" stroke="#9f7aea" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="710" y="30" fill="#9f7aea" font-size="11" font-weight="bold">【販社（ディーラー）】</text>
+      <rect x="10" y="270" width="500" height="220" rx="10" fill="#1a150a" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="20" y="290" fill="#f6ad55" font-size="11" font-weight="bold">【ホール業界団体】</text>
+      <rect x="550" y="270" width="435" height="220" rx="10" fill="#0d1520" stroke="#4299e1" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="560" y="290" fill="#4299e1" font-size="11" font-weight="bold">【横断・健全化・政治】</text>
+      <rect x="10" y="540" width="500" height="200" rx="10" fill="#1a1a0a" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="20" y="560" fill="#ffd700" font-size="11" font-weight="bold">【三店方式（景品流通）】</text>
+      <rect x="550" y="540" width="435" height="200" rx="10" fill="#1a0a1a" stroke="#f687b3" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="560" y="560" fill="#f687b3" font-size="11" font-weight="bold">【ユーザー（遊技者）】</text>
+
+      <!-- ノード（クリック可） -->
+      <rect class="node" data-id="keisatsucho" x="25" y="40" width="120" height="50" rx="8" fill="#c53030" stroke="#fc8181" stroke-width="1.5"/>
+      <text x="85" y="61" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">警察庁</text>
+      <text x="85" y="76" fill="#fca5a5" font-size="8.5" text-anchor="middle">（生活安全局保安課）</text>
+
+      <rect class="node" data-id="kouan" x="155" y="40" width="120" height="50" rx="8" fill="#9b2c2c" stroke="#fc8181" stroke-width="1.5"/>
+      <text x="215" y="61" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">都道府県公安委員会</text>
+      <text x="215" y="76" fill="#fca5a5" font-size="8.5" text-anchor="middle">・都道府県警察</text>
+
+      <rect class="node" data-id="houtsukyo" x="60" y="120" width="220" height="50" rx="8" fill="#742a2a" stroke="#fc8181" stroke-width="1.5"/>
+      <text x="170" y="141" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">保安通信協会（保通協）</text>
+      <text x="170" y="157" fill="#fca5a5" font-size="8.5" text-anchor="middle">型式試験機関（国家公安委員会指定）</text>
+
+      <rect class="node" data-id="nichikumi" x="370" y="45" width="120" height="50" rx="8" fill="#22543d" stroke="#9ae6b4" stroke-width="1.5"/>
+      <text x="430" y="66" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">日工組</text>
+      <text x="430" y="81" fill="#9ae6b4" font-size="8.5" text-anchor="middle">パチンコメーカー組合</text>
+
+      <rect class="node" data-id="nichiden" x="510" y="45" width="120" height="50" rx="8" fill="#22543d" stroke="#9ae6b4" stroke-width="1.5"/>
+      <text x="570" y="66" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">日電協</text>
+      <text x="570" y="81" fill="#9ae6b4" font-size="8.5" text-anchor="middle">パチスロメーカー組合</text>
+
+      <rect class="node" data-id="makers" x="370" y="125" width="260" height="50" rx="8" fill="#1c4532" stroke="#9ae6b4" stroke-width="1"/>
+      <text x="500" y="146" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">パチンコ・パチスロメーカー各社</text>
+      <text x="500" y="163" fill="#9ae6b4" font-size="8" text-anchor="middle">三共・京楽・SANKYOほか（日工組員） ／ コナミ・ユニバーサルほか（日電協員）</text>
+
+      <rect class="node" data-id="zengankyo" x="708" y="45" width="120" height="50" rx="8" fill="#322659" stroke="#d6bcfa" stroke-width="1.5"/>
+      <text x="768" y="66" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">全商協</text>
+      <text x="768" y="81" fill="#d6bcfa" font-size="8.5" text-anchor="middle">パチンコ販売商社連合</text>
+
+      <rect class="node" data-id="kaido" x="848" y="45" width="120" height="50" rx="8" fill="#322659" stroke="#d6bcfa" stroke-width="1.5"/>
+      <text x="908" y="66" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">回胴遊商</text>
+      <text x="908" y="81" fill="#d6bcfa" font-size="8.5" text-anchor="middle">パチスロ販売商社組合</text>
+
+      <rect class="node" data-id="zengankyo" x="708" y="125" width="260" height="50" rx="8" fill="#2d2050" stroke="#d6bcfa" stroke-width="1"/>
+      <text x="838" y="148" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">販社（中古・新台ディーラー）各社</text>
+      <text x="838" y="163" fill="#d6bcfa" font-size="8" text-anchor="middle">新台・中古台をホールへ販売</text>
+
+      <rect class="node" data-id="zennichi" x="20" y="305" width="220" height="55" rx="8" fill="#7b4f12" stroke="#f6ad55" stroke-width="1.5"/>
+      <text x="130" y="327" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">全日遊連</text>
+      <text x="130" y="343" fill="#fbd38d" font-size="8.5" text-anchor="middle">全日本遊技事業協同組合連合会</text>
+      <text x="130" y="355" fill="#fbd38d" font-size="8" text-anchor="middle">（全国47都道府県組合の連合体）</text>
+
+      <rect class="node" data-id="todofuken" x="20" y="385" width="220" height="50" rx="8" fill="#6b3a0d" stroke="#f6ad55" stroke-width="1"/>
+      <text x="130" y="406" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">都道府県遊技業組合</text>
+      <text x="130" y="421" fill="#fbd38d" font-size="8" text-anchor="middle">例：東京都遊技業協同組合 など47組合</text>
+
+      <rect class="node" data-id="mirai" x="260" y="305" width="230" height="55" rx="8" fill="#7b4f12" stroke="#f6ad55" stroke-width="1.5"/>
+      <text x="375" y="327" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">MIRAIぱちんこ産業連盟</text>
+      <text x="375" y="343" fill="#fbd38d" font-size="8.5" text-anchor="middle">第2のホール団体（2021年設立）</text>
+      <text x="375" y="355" fill="#fbd38d" font-size="8" text-anchor="middle">同友会＋PCSAが統合・67社加盟</text>
+
+      <rect class="node" data-id="halls" x="260" y="385" width="230" height="50" rx="8" fill="#6b3a0d" stroke="#f6ad55" stroke-width="1"/>
+      <text x="375" y="406" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">パチンコホール各社</text>
+      <text x="375" y="421" fill="#fbd38d" font-size="8" text-anchor="middle">マルハン・ダイナム・ガイアほか約7,000店舗</text>
+
+      <rect class="node" data-id="nijuisseiki" x="560" y="300" width="200" height="55" rx="8" fill="#1a365d" stroke="#63b3ed" stroke-width="1.5"/>
+      <text x="660" y="322" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">パチンコ・パチスロ</text>
+      <text x="660" y="336" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">産業21世紀会</text>
+      <text x="660" y="349" fill="#90cdf4" font-size="8" text-anchor="middle">14団体の連絡協議会（1996年設立）</text>
+
+      <rect class="node" data-id="nichiyukyo" x="770" y="300" width="200" height="55" rx="8" fill="#1a365d" stroke="#63b3ed" stroke-width="1.5"/>
+      <text x="870" y="322" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">日遊協</text>
+      <text x="870" y="337" fill="#90cdf4" font-size="8.5" text-anchor="middle">日本遊技関連事業協会</text>
+      <text x="870" y="350" fill="#90cdf4" font-size="8" text-anchor="middle">ホール・メーカー等横断型組織</text>
+
+      <rect class="node" data-id="kenzenka" x="560" y="375" width="200" height="50" rx="8" fill="#1a365d" stroke="#63b3ed" stroke-width="1.5"/>
+      <text x="660" y="396" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">遊技産業健全化推進機構</text>
+      <text x="660" y="411" fill="#90cdf4" font-size="8" text-anchor="middle">不正改造防止・立入検査（2006年設立）</text>
+
+      <rect class="node" data-id="seijirenmei" x="770" y="375" width="200" height="50" rx="8" fill="#1a365d" stroke="#63b3ed" stroke-width="1.5"/>
+      <text x="870" y="396" fill="#fff" font-size="9.5" font-weight="bold" text-anchor="middle">全日本遊技産業政治連盟</text>
+      <text x="870" y="411" fill="#90cdf4" font-size="8" text-anchor="middle">業界の政治団体・ロビー活動（2022年設立）</text>
+
+      <rect class="node" data-id="santen" x="22" y="578" width="130" height="50" rx="8" fill="#5d4a10" stroke="#ffd700" stroke-width="1.5"/>
+      <text x="87" y="599" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">ホール（パチンコ店）</text>
+      <text x="87" y="614" fill="#fde68a" font-size="8" text-anchor="middle">特殊景品を提供</text>
+
+      <rect class="node" data-id="tonya" x="192" y="578" width="140" height="50" rx="8" fill="#5d4a10" stroke="#ffd700" stroke-width="1.5"/>
+      <text x="262" y="599" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">景品問屋</text>
+      <text x="262" y="614" fill="#fde68a" font-size="8" text-anchor="middle">特殊景品を流通・卸売</text>
+
+      <rect class="node" data-id="koukanjo" x="372" y="578" width="130" height="50" rx="8" fill="#5d4a10" stroke="#ffd700" stroke-width="1.5"/>
+      <text x="437" y="599" fill="#fff" font-size="10" font-weight="bold" text-anchor="middle">景品交換所</text>
+      <text x="437" y="614" fill="#fde68a" font-size="8" text-anchor="middle">古物商・独立事業者</text>
+
+      <rect class="node" data-id="user" x="560" y="575" width="200" height="140" rx="8" fill="#4a1942" stroke="#f687b3" stroke-width="1.5"/>
+      <text x="660" y="600" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">遊技者（ユーザー）</text>
+      <text x="660" y="618" fill="#fbb6ce" font-size="8.5" text-anchor="middle">約1,300万人（推計）</text>
+      <text x="660" y="638" fill="#fbb6ce" font-size="8" text-anchor="middle">・パチンコ台でプレイ</text>
+      <text x="660" y="652" fill="#fbb6ce" font-size="8" text-anchor="middle">・出玉を特殊景品に交換</text>
+      <text x="660" y="666" fill="#fbb6ce" font-size="8" text-anchor="middle">・景品交換所で現金化（三店方式）</text>
+      <text x="660" y="684" fill="#fbb6ce" font-size="8" text-anchor="middle">・依存症リスクあり（社会問題）</text>
+
+      <!-- エッジ -->
+      <line x1="145" y1="65" x2="155" y2="65" stroke="#e94560" stroke-width="1.5" marker-end="url(#arr-red)"/>
+      <line x1="130" y1="90" x2="130" y2="120" stroke="#e94560" stroke-width="1.5" marker-end="url(#arr-red)"/>
+      <line x1="200" y1="90" x2="175" y2="120" stroke="#e94560" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-red)"/>
+      <line x1="280" y1="145" x2="370" y2="110" stroke="#718096" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <line x1="280" y1="150" x2="510" y2="115" stroke="#718096" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <line x1="430" y1="95" x2="430" y2="125" stroke="#48bb78" stroke-width="1.3" marker-end="url(#arr-green)"/>
+      <line x1="570" y1="95" x2="570" y2="125" stroke="#48bb78" stroke-width="1.3" marker-end="url(#arr-green)"/>
+      <line x1="768" y1="95" x2="768" y2="125" stroke="#9f7aea" stroke-width="1.3" marker-end="url(#arr)"/>
+      <line x1="908" y1="95" x2="908" y2="125" stroke="#9f7aea" stroke-width="1.3" marker-end="url(#arr)"/>
+      <line x1="630" y1="152" x2="708" y2="152" stroke="#718096" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="666" y="148" class="arrow-label" text-anchor="middle">新台供給</text>
+      <line x1="780" y1="175" x2="480" y2="395" stroke="#718096" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <line x1="215" y1="90" x2="130" y2="305" stroke="#e94560" stroke-width="1.8" marker-end="url(#arr-red)"/>
+      <text x="140" y="218" class="arrow-label" fill="#e94560" text-anchor="middle">営業許可・規制</text>
+      <line x1="130" y1="360" x2="130" y2="385" stroke="#f6ad55" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+      <line x1="240" y1="410" x2="260" y2="410" stroke="#f6ad55" stroke-width="1.2" marker-end="url(#arr-gold)"/>
+      <line x1="350" y1="435" x2="130" y2="578" stroke="#718096" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <line x1="152" y1="614" x2="558" y2="635" stroke="#ffd700" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+      <text x="350" y="625" class="arrow-label" fill="#ffd700" text-anchor="middle">①特殊景品を渡す</text>
+      <line x1="560" y1="655" x2="502" y2="614" stroke="#ffd700" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+      <text x="530" y="647" class="arrow-label" fill="#ffd700" text-anchor="middle">②換金</text>
+      <line x1="372" y1="603" x2="332" y2="603" stroke="#ffd700" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+      <text x="350" y="597" class="arrow-label" fill="#ffd700" text-anchor="middle">③売却</text>
+      <line x1="192" y1="603" x2="152" y2="603" stroke="#ffd700" stroke-width="1.5" marker-end="url(#arr-gold)"/>
+      <text x="170" y="597" class="arrow-label" fill="#ffd700" text-anchor="middle">④卸売</text>
+      <line x1="155" y1="580" x2="558" y2="580" stroke="#f687b3" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text x="360" y="572" class="arrow-label" fill="#f687b3" text-anchor="middle">遊技サービス提供</text>
+      <line x1="558" y1="690" x2="152" y2="625" stroke="#f687b3" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+      <text x="310" y="680" class="arrow-label" fill="#f687b3" text-anchor="middle">遊技料金（貸し球代）</text>
+      <line x1="490" y1="360" x2="556" y2="345" stroke="#4299e1" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-blue)"/>
+      <line x1="760" y1="330" x2="760" y2="327" stroke="#4299e1" stroke-width="1.2"/>
+      <line x1="760" y1="327" x2="770" y2="327" stroke="#4299e1" stroke-width="1.2" marker-end="url(#arr-blue)"/>
+      <line x1="590" y1="425" x2="490" y2="430" stroke="#4299e1" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-blue)"/>
+      <text x="528" y="420" class="arrow-label" fill="#4299e1" text-anchor="middle">立入検査</text>
+      <text x="870" y="445" fill="#90cdf4" font-size="8" text-anchor="middle">↑ 国会議員へのロビー活動</text>
+      <text x="500" y="245" fill="#e94560" font-size="8.5" text-anchor="middle" font-style="italic">※ 警察OBの天下り（非公式）→ 保通協・業界団体幹部へ</text>
+      <line x1="215" y1="192" x2="215" y2="240" stroke="#e94560" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="215" y1="240" x2="600" y2="240" stroke="#e94560" stroke-width="1" stroke-dasharray="3,3"/>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-box" style="background:#e94560"></div>規制・監督（警察系）</div>
+    <div class="legend-item"><div class="legend-box" style="background:#48bb78"></div>メーカー</div>
+    <div class="legend-item"><div class="legend-box" style="background:#9f7aea"></div>販社</div>
+    <div class="legend-item"><div class="legend-box" style="background:#f6ad55"></div>ホール業界団体</div>
+    <div class="legend-item"><div class="legend-box" style="background:#4299e1"></div>横断・健全化・政治</div>
+    <div class="legend-item"><div class="legend-box" style="background:#ffd700"></div>三店方式（景品流通）</div>
+    <div class="legend-item"><div class="legend-box" style="background:#f687b3"></div>ユーザー</div>
+    <div class="legend-item"><span style="color:#718096">─ ─</span> 間接的・非公式な関係</div>
+  </div>
+
+  <p class="empty" id="empty">該当する団体が見つかりませんでした。</p>
+
+  <!-- ── 規制当局 ── -->
+  <div class="section-title sec" data-keywords="規制 警察 当局 監督">🚔 規制・監督当局</div>
+  <div class="cards">
+    <div class="card" id="card-keisatsucho" data-keywords="警察庁 風営法 保安課 通達 規制 第4号営業 出玉基準" style="--accent:#e94560">
+      <div class="tag" style="background:#e94560; color:#fff">規制</div>
+      <h3>警察庁（生活安全局保安課）</h3>
+      <div class="abbr">National Police Agency</div>
+      <p>風俗営業等の規制及び業務の適正化等に関する法律（風営法）の所管庁。パチンコ・パチスロは「第4号営業」として規制対象。全国の遊技機規則・出玉基準の制定、業界への通達・行政指導を行う。事実上、業界の最上位監督者。</p>
+    </div>
+    <div class="card" id="card-kouan" data-keywords="都道府県 公安委員会 警察 営業許可 立入検査 広告規制" style="--accent:#e94560">
+      <div class="tag" style="background:#e94560; color:#fff">規制</div>
+      <h3>都道府県公安委員会・都道府県警察</h3>
+      <div class="abbr">Prefectural Public Safety Commissions</div>
+      <p>各パチンコホールへの「風俗営業許可」を交付する実務主体。許可の審査・取消し、立入検査、営業時間・広告規制の執行を担当。各ホールは都道府県警に許可申請を行い、毎年更新義務がある。</p>
+    </div>
+    <div class="card" id="card-houtsukyo" data-keywords="保通協 保安通信協会 型式試験 国家公安委員会 射幸性 出玉率 警察OB" style="--accent:#c53030">
+      <div class="tag" style="background:#c53030; color:#fff">外郭機関</div>
+      <h3>保安通信協会（保通協）</h3>
+      <div class="abbr">HOUTSUKYOU / Security Communication Association</div>
+      <p>1982年設立。国家公安委員会が指定する<strong>唯一の遊技機型式試験機関</strong>。パチンコ・パチスロ台の新機種は出玉率・射幸性基準を満たすか、必ずここの試験を通過しなければ市場に出せない。幹部に警察OBが多数在籍。</p>
+    </div>
+  </div>
+  <p class="note">⚠️ 警察と業界の関係：警察庁OBが保通協・業界団体の幹部ポストに就く「天下り」構造が長年指摘されている。業界への規制権限を持ちながら、退職後に業界側へ移るという利益相反問題がある。</p>
+
+  <!-- ── メーカー ── -->
+  <div class="section-title sec" data-keywords="メーカー 製造 日工組 日電協">🏭 メーカー（製造）関連団体</div>
+  <div class="cards">
+    <div class="card" id="card-nichikumi" data-keywords="日工組 日本遊技機工業組合 パチンコメーカー 特許プール 京楽 SANKYO 三洋物産 西陣 大一商会 豊丸" style="--accent:#48bb78">
+      <div class="tag" style="background:#48bb78; color:#000">パチンコメーカー</div>
+      <h3>日本遊技機工業組合（日工組）</h3>
+      <div class="abbr">NICHIKUMI / Japan Amusement Machine Industry Association</div>
+      <p>パチンコ台（球打ち式）メーカーの団体。加盟することで業界内の特許プールを利用でき、事実上加盟必須。主要加盟社：京楽産業、SANKYO、三洋物産、西陣、大一商会、豊丸産業ほか。自主規制（内規）の策定、メーカー間の技術標準化も行う。</p>
+    </div>
+    <div class="card" id="card-nichiden" data-keywords="日電協 日本電動式遊技機工業協同組合 パチスロメーカー リール コナミ ユニバーサル 山佐 北電子 オリンピア 型式試験" style="--accent:#48bb78">
+      <div class="tag" style="background:#48bb78; color:#000">パチスロメーカー</div>
+      <h3>日本電動式遊技機工業協同組合（日電協）</h3>
+      <div class="abbr">NICHIDEN / Japan Electronic Amusement Machine Industrial Cooperative</div>
+      <p>パチスロ台（リール式）メーカーの団体。1980年9社で発足。主要加盟社：コナミアミューズメント、ユニバーサルエンターテインメント、山佐、北電子、オリンピアほか。型式試験申請の窓口機能、業界自主規制・内規の管理を担う。</p>
+    </div>
+    <div class="card" id="card-makers" data-keywords="メーカー各社 新機種 型式試験 シール 海物語 三洋物産 エヴァンゲリオン 京楽 IP" style="--accent:#68d391">
+      <div class="tag" style="background:#1c4532; color:#9ae6b4">主要メーカー</div>
+      <h3>パチンコ・パチスロメーカー各社</h3>
+      <div class="abbr">Manufacturers</div>
+      <p>新機種を開発→保通協に型式試験申請→合格後に日工組/日電協のシール貼付→販社を通じてホールに販売、というフローで市場に投入される。近年は海物語シリーズ（三洋物産）、エヴァンゲリオン（京楽）など人気IPタイトルが主流。</p>
+    </div>
+  </div>
+
+  <!-- ── 販社 ── -->
+  <div class="section-title sec" data-keywords="販社 ディーラー 全商協 回胴遊商 流通">🚚 販社（ディーラー）関連団体</div>
+  <div class="cards">
+    <div class="card" id="card-zengankyo" data-keywords="全商協 全国遊技機商業協同組合連合会 販社 ディーラー 新台 中古台 確認証紙 流通" style="--accent:#9f7aea">
+      <div class="tag" style="background:#9f7aea; color:#fff">パチンコ販社</div>
+      <h3>全国遊技機商業協同組合連合会（全商協）</h3>
+      <div class="abbr">ZENGANKYOU</div>
+      <p>1989年設立。パチンコ台（球打ち式）の販売商社が加盟する全国連合組織。北海道・東北・東日本・中部・関西・中国・四国・九州の8地区組合、約950社が所属。新台・中古台の流通を管理し、確認証紙の発行なども行う。</p>
+    </div>
+    <div class="card" id="card-kaido" data-keywords="回胴遊商 回胴式遊技機商業協同組合 パチスロ 販社 中古 確認証紙 不正改造防止 確認シール" style="--accent:#9f7aea">
+      <div class="tag" style="background:#9f7aea; color:#fff">パチスロ販社</div>
+      <h3>回胴式遊技機商業協同組合（回胴遊商）</h3>
+      <div class="abbr">KAIDO YUSHO</div>
+      <p>パチスロ台の販売商社が集まる組合。全国7支部で構成。中古パチスロ台の流通確認証紙の発行、不正改造防止のための確認シール管理が主な業務。回胴（かいどう）とはリールを回す方式を指す。</p>
+    </div>
+  </div>
+
+  <!-- ── ホール ── -->
+  <div class="section-title sec" data-keywords="ホール 遊技場 全日遊連 MIRAI 都道府県組合">🏢 ホール（遊技場）関連団体</div>
+  <div class="cards">
+    <div class="card" id="card-zennichi" data-keywords="全日遊連 全日本遊技事業協同組合連合会 ホール 47都道府県 連合体 自主規制 広告宣伝ガイドライン 4団体" style="--accent:#f6ad55">
+      <div class="tag" style="background:#f6ad55; color:#000">最大のホール団体</div>
+      <h3>全日本遊技事業協同組合連合会（全日遊連）</h3>
+      <div class="abbr">ZENNICHIYUREN</div>
+      <p>1992年設立。全国47都道府県の遊技業組合を会員とするホール団体の最大組織（連合体）。加盟ホール数は業界最多。警察庁・都道府県警への業界意見の窓口として機能し、自主規制の立案・普及、行政との協議を担う。</p>
+      <a class="xlink" href="index.html?q=全日遊連" target="_blank" rel="noopener">📘 この団体が出した広告宣伝ガイドラインを見る →</a>
+    </div>
+    <div class="card" id="card-todofuken" data-keywords="都道府県遊技業組合 東京都遊技業協同組合 東遊組 地域組合 自主規制 釘調整 折衝" style="--accent:#f6ad55">
+      <div class="tag" style="background:#f6ad55; color:#000">都道府県組合</div>
+      <h3>都道府県遊技業組合（47組合）</h3>
+      <div class="abbr">例：東京都遊技業協同組合（東遊組）ほか</div>
+      <p>各都道府県のホール事業者が加盟する地域組合。全日遊連の構成メンバー。各地域での自主規制（広告・釘調整ルールなど）の策定・管理、都道府県警との折衝を担当する。</p>
+    </div>
+    <div class="card" id="card-mirai" data-keywords="MIRAI ぱちんこ産業連盟 第2のホール団体 同友会 PCSA パチンコチェーンストア協会 大手チェーン 広告宣伝ガイドライン 4団体" style="--accent:#ed8936">
+      <div class="tag" style="background:#ed8936; color:#fff">第2ホール団体</div>
+      <h3>MIRAIぱちんこ産業連盟</h3>
+      <div class="abbr">MIRAI Pachinko Industry Federation</div>
+      <p>2021年設立。「同友会」と「パチンコチェーンストア協会（PCSA）」が統合して誕生した新興団体。正会員67社（大手チェーン中心）・賛助会員101社。全日遊連とは独立した立場で政策提言・業界改革を推進。</p>
+      <a class="xlink" href="index.html?q=MIRAI" target="_blank" rel="noopener">📘 この団体が出した広告宣伝ガイドラインを見る →</a>
+    </div>
+    <div class="card" id="card-halls" data-keywords="パチンコホール各社 マルハン ダイナム ガイア 夢コーポレーション P-WORLD 7000店舗 店舗数" style="--accent:#c05621">
+      <div class="tag" style="background:#c05621; color:#fff">ホール各社</div>
+      <h3>パチンコホール各社</h3>
+      <div class="abbr">全国約7,000店舗（2024年時点）</div>
+      <p>マルハン（国内最大手）・ダイナム・ガイア・夢コーポレーション・P-WORLDほか。ピーク（1995年頃）は約18,000店あったが、規制強化・少子化により現在は約7,000店前後まで減少。</p>
+    </div>
+  </div>
+
+  <!-- ── 横断・健全化 ── -->
+  <div class="section-title sec" data-keywords="横断 健全化 政治 日遊協 21世紀会 推進機構 政治連盟">🤝 横断的組織・健全化団体・政治団体</div>
+  <div class="cards">
+    <div class="card" id="card-nichiyukyo" data-keywords="日遊協 日本遊技関連事業協会 横断 ホール メーカー 販社 景品卸 依存症対策 一般社団法人 広告宣伝ガイドライン 4団体" style="--accent:#4299e1">
+      <div class="tag" style="background:#4299e1; color:#fff">横断型</div>
+      <h3>日本遊技関連事業協会（日遊協）</h3>
+      <div class="abbr">NICHIYUKYO / Japan Amusement Related Business Association</div>
+      <p>1989年設立。ホール・メーカー・販社・設備機器メーカー・景品卸など業界の垣根を超えた横断的組織。2014年に一般社団法人化。業界全体の意見集約や社会的認知向上、依存症対策の推進などを行う。主要6団体のひとつ。</p>
+      <a class="xlink" href="index.html?q=日遊協" target="_blank" rel="noopener">📘 この団体が出した広告宣伝ガイドラインを見る →</a>
+    </div>
+    <div class="card" id="card-nijuisseiki" data-keywords="21世紀会 パチンコパチスロ産業21世紀会 連絡協議会 14団体 射幸性 依存症 広告規制 合意形成" style="--accent:#4299e1">
+      <div class="tag" style="background:#4299e1; color:#fff">連絡協議会</div>
+      <h3>パチンコ・パチスロ産業21世紀会</h3>
+      <div class="abbr">21世紀会</div>
+      <p>1996年設立。業界の主要14団体（全日遊連・日遊協・日工組・日電協・全商協・回胴遊商など）が参加する連絡協議会。業界横断的な課題（射幸性問題・依存症対策・広告規制など）について合意形成する場。</p>
+    </div>
+    <div class="card" id="card-kenzenka" data-keywords="遊技産業健全化推進機構 OSDPPI 不正改造 誓約書 認定証 立入検査 ゴト 抜き打ち" style="--accent:#63b3ed">
+      <div class="tag" style="background:#63b3ed; color:#000">健全化</div>
+      <h3>遊技産業健全化推進機構</h3>
+      <div class="abbr">OSDPPI（2006年設立）</div>
+      <p>全日遊連・メーカー・販社が共同設立した一般社団法人。加盟ホールから「不正改造機を設置しない」旨の誓約書を取得し、認定証を交付。年間を通じて抜き打ちの立入検査を実施し、不正改造（いわゆるゴト行為対策）を防ぐ。</p>
+    </div>
+    <div class="card" id="card-seijirenmei" data-keywords="全日本遊技産業政治連盟 遊技連 政治団体 ロビー活動 国会議員 風営法改正 IR カジノ 遊技税" style="--accent:#63b3ed">
+      <div class="tag" style="background:#1a365d; color:#90cdf4">政治</div>
+      <h3>全日本遊技産業政治連盟（遊技連）</h3>
+      <div class="abbr">2022年設立</div>
+      <p>業界13団体有志で設立された政治団体。ホール事業者・メーカー・販社から構成。国会議員へのロビー活動、政策提言を通じて業界に有利な法制度の実現を目指す。他業界と同様の政治連盟機能を持つ。</p>
+    </div>
+  </div>
+
+  <!-- ── 三店方式 ── -->
+  <div class="section-title sec" data-keywords="三店方式 景品 換金 景品問屋 景品交換所">💴 三店方式（景品流通の仕組み）</div>
+  <div class="santen-wrap">
+    <svg viewBox="0 0 900 200" width="860" xmlns="http://www.w3.org/2000/svg">
+      <defs><marker id="g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ffd700"/></marker></defs>
+      <rect x="20" y="65" width="140" height="60" rx="8" fill="#7b4f12" stroke="#ffd700" stroke-width="2"/>
+      <text x="90" y="90" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">①パチンコホール</text>
+      <text x="90" y="108" fill="#fde68a" font-size="9" text-anchor="middle">特殊景品を客に渡す</text>
+      <rect x="230" y="15" width="140" height="60" rx="8" fill="#4a1942" stroke="#f687b3" stroke-width="2"/>
+      <text x="300" y="40" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">②遊技者（客）</text>
+      <text x="300" y="58" fill="#fbb6ce" font-size="9" text-anchor="middle">特殊景品を受け取り</text>
+      <text x="300" y="70" fill="#fbb6ce" font-size="9" text-anchor="middle">換金所へ持参</text>
+      <rect x="440" y="65" width="140" height="60" rx="8" fill="#5d4a10" stroke="#ffd700" stroke-width="2"/>
+      <text x="510" y="90" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">③景品交換所</text>
+      <text x="510" y="108" fill="#fde68a" font-size="9" text-anchor="middle">特殊景品を現金で買取</text>
+      <rect x="660" y="65" width="140" height="60" rx="8" fill="#5d4a10" stroke="#ffd700" stroke-width="2"/>
+      <text x="730" y="90" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">④景品問屋</text>
+      <text x="730" y="108" fill="#fde68a" font-size="9" text-anchor="middle">買い取ってホールへ卸す</text>
+      <line x1="160" y1="88" x2="228" y2="55" stroke="#ffd700" stroke-width="1.8" marker-end="url(#g)"/>
+      <text x="193" y="63" fill="#fde68a" font-size="8.5" text-anchor="middle">景品渡す</text>
+      <line x1="370" y1="55" x2="438" y2="88" stroke="#ffd700" stroke-width="1.8" marker-end="url(#g)"/>
+      <text x="407" y="62" fill="#fde68a" font-size="8.5" text-anchor="middle">景品売却</text>
+      <line x1="580" y1="95" x2="658" y2="95" stroke="#ffd700" stroke-width="1.8" marker-end="url(#g)"/>
+      <text x="617" y="88" fill="#fde68a" font-size="8.5" text-anchor="middle">売却</text>
+      <path d="M730 125 Q730 180 90 180 Q20 180 20 125" fill="none" stroke="#ffd700" stroke-width="1.8" stroke-dasharray="6,3" marker-end="url(#g)"/>
+      <text x="400" y="196" fill="#fde68a" font-size="8.5" text-anchor="middle">④景品問屋がホールへ卸す（循環）</text>
+      <text x="510" y="150" fill="#48bb78" font-size="8.5" text-anchor="middle">↓ 現金（客へ）</text>
+      <text x="90" y="20" fill="#a0aec0" font-size="8" text-anchor="middle">「ホール・景品交換所・景品問屋」の3者が独立した</text>
+      <text x="90" y="35" fill="#a0aec0" font-size="8" text-anchor="middle">別事業者であることで違法性を回避</text>
+    </svg>
+  </div>
+  <div class="cards">
+    <div class="card" id="card-tonya" data-keywords="景品問屋 特殊景品 金 貴金属 ICカード 流通 卸 循環" style="--accent:#ffd700">
+      <div class="tag" style="background:#ffd700; color:#000">景品流通</div>
+      <h3>景品問屋</h3>
+      <div class="abbr">特殊景品の流通業者</div>
+      <p>ホールから仕入れた特殊景品（金・貴金属・ICカード等）を景品交換所から買い取り、再びホールへ卸すことで景品を循環させる業者。実態はパチンコ業界専用の流通チャネル。各都道府県に1〜数社存在し、地域ごとの組合を持つ。</p>
+    </div>
+    <div class="card" id="card-koukanjo" data-keywords="景品交換所 換金 古物商 独立事業者 別法人 買取 三店方式" style="--accent:#ffd700">
+      <div class="tag" style="background:#ffd700; color:#000">換金窓口</div>
+      <h3>景品交換所</h3>
+      <div class="abbr">古物商・ホールとは独立した事業者</div>
+      <p>ホール隣接地や近隣に設置された換金窓口。古物商の許可を持つ独立事業者として運営され、法律上はホールとは別法人。遊技者が持ち込んだ特殊景品を現金で買い取る。三店方式の要として機能。</p>
+    </div>
+    <div class="card" id="card-santen" data-keywords="三店方式 大阪方式 換金 合法 グレーゾーン 1961年 慣行 出玉 現金" style="--accent:#ffd700">
+      <div class="tag" style="background:#5d4a10; color:#fde68a">仕組み</div>
+      <h3>三店方式とは</h3>
+      <div class="abbr">1961年大阪発祥の換金スキーム</div>
+      <p>パチンコの出玉を直接現金に換えることは違法だが、「ホール→景品→交換所→現金」という流れを別事業者3者に分散させることで合法とされている日本独自の慣行。元大阪府警警察官が考案した「大阪方式」が全国に普及。</p>
+    </div>
+  </div>
+
+  <!-- ── ユーザー ── -->
+  <div class="section-title sec" data-keywords="ユーザー 遊技者 依存症 多重債務">👤 ユーザー（遊技者）</div>
+  <div class="cards">
+    <div class="card" id="card-user" data-keywords="遊技者 ユーザー 1300万人 レジャー白書 貸し球代 依存症 遊技障害 ギャンブル 参加人口" style="--accent:#f687b3">
+      <div class="tag" style="background:#f687b3; color:#000">エンドユーザー</div>
+      <h3>遊技者（パチンコ・パチスロユーザー）</h3>
+      <div class="abbr">推計約1,300万人（レジャー白書2023）</div>
+      <p>ホールを訪れ、貸し球代を払って遊技を楽しむ最終消費者。出玉は特殊景品に交換し、三店方式で現金化できる。依存症リスクが社会問題化しており、業界・行政ともに「遊技障害（ギャンブル依存症）」対策を推進している。ピーク時（1995年）の参加人口は約2,900万人とされる。</p>
+    </div>
+    <div class="card" id="card-izonsho" data-keywords="依存症 多重債務 入場制限申告 のめり込み防止 安心娯楽宣言 依存症対策基本法 社会問題" style="--accent:#f687b3">
+      <div class="tag" style="background:#742a2a; color:#fca5a5">社会問題</div>
+      <h3>依存症・多重債務問題</h3>
+      <div class="abbr">業界・行政が共同で対策推進</div>
+      <p>依存症対策としてホールには「入場制限申告制度」「のめり込み防止ポスター掲示義務」が課されている。業界自主規制として「安心娯楽宣言」（業界横断の依存症対策宣言）も2018年に策定された。国の依存症対策基本法（2018年）とも連携。</p>
+    </div>
+  </div>
+
+  <!-- ── 関係性まとめ ── -->
+  <div class="section-title sec" data-keywords="関係性 パワー構造 相関">🔗 主要な関係性・パワー構造</div>
+  <div class="relation-grid">
+    <div class="relation-item" data-keywords="警察庁 業界 風営法 天下り 蜜月"><h4>🚔 警察庁 ↔ 業界全体</h4><p>風営法に基づく最上位規制者。営業許可・出玉基準・広告規制すべてを掌握。一方で退官後の天下りポストを業界に依存するという「蜜月関係」が批判される。</p></div>
+    <div class="relation-item" data-keywords="保通協 メーカー 型式試験 ゲートキーパー"><h4>🔬 保通協 ↔ メーカー</h4><p>メーカーは新台を市場投入する前に保通協の型式試験を受けなければならない。合格率・審査基準は非公表で、事実上の市場参入ゲートキーパー。</p></div>
+    <div class="relation-item" data-keywords="メーカー 販社 ホール サプライチェーン 中古台"><h4>🏭 メーカー → 販社 → ホール</h4><p>新台はメーカー→販社（ディーラー）→ホールというサプライチェーンで流通。中古台も販社が仲介。一台あたり数十万〜百万円超の取引。</p></div>
+    <div class="relation-item" data-keywords="全日遊連 警察庁 窓口 自主規制 代理人"><h4>🏢 全日遊連 ↔ 警察庁</h4><p>ホール業界最大の窓口団体として警察庁・各県警と協議。行政通達の受け手となり、自主規制の実施義務を担う。業界の「代理人」的役割。</p></div>
+    <div class="relation-item" data-keywords="日遊協 横断 CSR 依存症 IR カジノ"><h4>🤝 日遊協 ↔ 業界全体</h4><p>ホール・メーカー・販社を横断する唯一の横断型団体。業界の社会的責任（CSR）・依存症対策・IRカジノ議論への対応など、産業全体のイメージ管理を担う。</p></div>
+    <div class="relation-item" data-keywords="政治連盟 国会議員 ロビー 風営法改正 IR 遊技税"><h4>🏛️ 政治連盟 → 国会議員</h4><p>全日本遊技産業政治連盟（2022年設立）が業界の政治的プレゼンスを強化。風営法改正・カジノ（IR）関連法制への対応、遊技税問題などで与野党議員へロビー活動。</p></div>
+    <div class="relation-item" data-keywords="健全化推進機構 ホール 立入検査 不正改造 認定証"><h4>🔎 健全化推進機構 → ホール</h4><p>不正改造防止のため、認定ホールへの抜き打ち立入検査を実施。警察が行う立入検査とは別に、業界自主規制として機能。認定証の掲示でユーザーへの信頼性アピールにもなる。</p></div>
+    <div class="relation-item" data-keywords="三店方式 ユーザー 換金 ギャンブル グレーゾーン 黙認"><h4>💴 三店方式 ↔ ユーザー</h4><p>事実上の換金システムとして機能しており、ユーザーの「パチンコ＝ギャンブル」認識を支える。法的にはグレーゾーンとされ、行政も「黙認」している状態が長年続いている。</p></div>
+    <div class="relation-item" data-keywords="全日遊連 MIRAI 競合 大手チェーン 市場原理"><h4>🆚 全日遊連 ↔ MIRAI</h4><p>同じホール団体でありながら、設立経緯・会員構成・業界改革スタンスが異なる競合関係。MIRAIは大手チェーン中心で、より市場原理重視の主張をする傾向がある。</p></div>
+  </div>
+
+  <div style="margin-top: 48px; padding: 20px; background:#13192a; border-radius: 10px; border: 1px solid #2d3748;">
+    <p style="font-size: 0.82rem; color:#718096;">
+      ※ 本資料は公開情報をもとに作成しています。店舗数・加盟社数等は調査時点（2024〜2026年）の推計値です。<br>
+      参考：全日遊連公式サイト／日遊協公式サイト／Wikipedia（各団体）ほか
+    </p>
+  </div>
+
+</div>
+
+<script src="assets/gyokai.js"></script>
+</body>
+</html>
