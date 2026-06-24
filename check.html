@@ -39,6 +39,14 @@
       </div>
     </section>
 
+    <!-- またはテキストを直接入力（OCRが苦手な画像対策・精度UP） -->
+    <details id="textBox" class="textbox">
+      <summary>📝 画像がうまく読めない時は「文字を直接入力／貼り付け」で判定（精度が上がります）</summary>
+      <p class="dz-note">ポスター等の文言を入力・貼り付けすると、読み取りミスなく正確に判定できます。</p>
+      <textarea id="textInput" placeholder="例：本日のおすすめ ジャグラー設定強化中 ●●の日 など、広告の文言を入力"></textarea>
+      <button type="button" id="textRun" class="btn btn-primary">この文字で判定する</button>
+    </details>
+
     <!-- プレビュー＆実行 -->
     <section id="work" hidden>
       <div class="work-row">

@@ -1,6 +1,8 @@
 /* ============================================================
    広告セルフチェック本体
-   画像 → OCR(Tesseract.js) → 危険ワード辞書(CHECK_RULES)と照合 → 結果表示
+   画像 → 前処理 → OCR(Tesseract.js) → 危険ワード辞書(CHECK_RULES)と照合
+   ・OCR結果は編集可（読み取りミスを直して再判定できる）
+   ・テキスト直接入力でも判定できる（精度UP）
    ※ 文字ベースの一次チェック。図柄の示唆は判定不可。断定もしない。
    ============================================================ */
 (function () {
@@ -15,6 +17,8 @@
   var $reset = document.getElementById("reset");
   var $status = document.getElementById("status");
   var $result = document.getElementById("result");
+  var $textInput = document.getElementById("textInput");
+  var $textRun = document.getElementById("textRun");
 
   var currentURL = null;
 
@@ -36,6 +40,15 @@
     }
   });
 
+  // ---- テキスト直接入力で判定 ----
+  if ($textRun) {
+    $textRun.addEventListener("click", function () {
+      var t = ($textInput.value || "").trim();
+      if (!t) { $textInput.focus(); return; }
+      analyze(t);
+    });
+  }
+
   function loadImage(file) {
     if (currentURL) URL.revokeObjectURL(currentURL);
     currentURL = URL.createObjectURL(file);
@@ -53,30 +66,68 @@
     $drop.scrollIntoView({ behavior: "smooth", block: "center" });
   });
 
+  // ---- 画像前処理（拡大・グレースケール・コントラスト強調）でOCR精度UP ----
+  function preprocess(url) {
+    return new Promise(function (resolve) {
+      try {
+        var img = new Image();
+        img.onload = function () {
+          try {
+            // 小さい画像は拡大、大きすぎる画像は縮小（OCRに効く範囲へ）
+            var scale = img.width < 1300 ? Math.min(2.4, 1300 / img.width)
+                       : (img.width > 2400 ? 2400 / img.width : 1);
+            var w = Math.max(1, Math.round(img.width * scale));
+            var h = Math.max(1, Math.round(img.height * scale));
+            var c = document.createElement("canvas");
+            c.width = w; c.height = h;
+            var ctx = c.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            var d = ctx.getImageData(0, 0, w, h), p = d.data;
+            for (var i = 0; i < p.length; i += 4) {
+              var g = 0.299 * p[i] + 0.587 * p[i + 1] + 0.114 * p[i + 2];
+              g = (g - 128) * 1.45 + 128;          // コントラスト強調
+              g = g < 0 ? 0 : g > 255 ? 255 : g;
+              p[i] = p[i + 1] = p[i + 2] = g;       // グレースケール化
+            }
+            ctx.putImageData(d, 0, 0);
+            resolve(c);
+          } catch (e) { resolve(null); }
+        };
+        img.onerror = function () { resolve(null); };
+        img.src = url;
+      } catch (e) { resolve(null); }
+    });
+  }
+
   // ---- OCR 実行 ----
   $run.addEventListener("click", function () {
     if (!currentURL) return;
     if (typeof Tesseract === "undefined") {
-      $status.innerHTML = "OCRライブラリを読み込めませんでした（ネット接続をご確認ください）。";
+      $status.innerHTML = "OCRライブラリを読み込めませんでした（ネット接続をご確認ください）。下の「文字を直接入力」もご利用いただけます。";
       return;
     }
     $run.disabled = true;
-    $status.textContent = "文字を読み取っています…（初回は言語データのダウンロードで少し時間がかかります）";
-    Tesseract.recognize(currentURL, "jpn", {
-      logger: function (m) {
-        if (m.status === "recognizing text" && m.progress != null) {
-          $status.textContent = "文字を読み取っています… " + Math.round(m.progress * 100) + "%";
-        } else if (m.status) {
-          $status.textContent = jpStatus(m.status) + "…";
+    $status.textContent = "画像を最適化しています…";
+    preprocess(currentURL).then(function (canvas) {
+      var target = canvas || currentURL;  // 前処理失敗時は元画像
+      $status.textContent = "文字を読み取っています…（初回は言語データのDLで少し時間がかかります）";
+      return Tesseract.recognize(target, "jpn", {
+        logger: function (m) {
+          if (m.status === "recognizing text" && m.progress != null) {
+            $status.textContent = "文字を読み取っています… " + Math.round(m.progress * 100) + "%";
+          } else if (m.status) {
+            $status.textContent = jpStatus(m.status) + "…";
+          }
         }
-      }
+      });
     }).then(function (res) {
       $run.disabled = false;
       $status.textContent = "";
-      analyze(res.data.text || "");
+      analyze((res && res.data && res.data.text) || "");
     }).catch(function (err) {
       $run.disabled = false;
-      $status.innerHTML = "読み取りに失敗しました：" + escapeHtml(String(err && err.message || err));
+      $status.innerHTML = "読み取りに失敗しました：" + escapeHtml(String(err && err.message || err)) +
+                          "<br>下の「文字を直接入力」で判定できます。";
     });
   });
 
@@ -93,15 +144,25 @@
 
   // ---- 照合・結果表示 ----
   function analyze(rawText) {
-    var norm = normalize(rawText);
+    rawText = rawText || "";
+    var norm = normalize(rawText);          // 空白除去・NFKC・小文字（部分一致用）
+    var loose = nfkcLower(rawText);         // 構造保持（正規表現用：日付など）
     var rules = window.CHECK_RULES || [];
     var hits = [];
 
     rules.forEach(function (rule) {
       var matched = [];
-      rule.words.forEach(function (w) {
+      // キーワード（部分一致）
+      (rule.words || []).forEach(function (w) {
         var nw = normalize(w);
         if (nw && norm.indexOf(nw) !== -1 && matched.indexOf(w) === -1) matched.push(w);
+      });
+      // 正規表現パターン（日付・「○の付く日」・設定6 など）
+      (rule.patterns || []).forEach(function (ps) {
+        try {
+          var m = loose.match(new RegExp(ps, "i"));
+          if (m && matched.indexOf(m[0]) === -1) matched.push(m[0]);
+        } catch (e) {}
       });
       if (matched.length) hits.push({ rule: rule, words: matched });
     });
@@ -111,7 +172,6 @@
 
     var html = "";
 
-    // サマリー
     var level, cls, msg;
     if (high.length) {
       level = "違反の可能性がある表現が見つかりました"; cls = "lv-high";
@@ -125,7 +185,6 @@
     }
     html += '<div class="summary ' + cls + '"><h2>' + escapeHtml(level) + '</h2><p>' + escapeHtml(msg) + '</p></div>';
 
-    // ヒット一覧
     if (hits.length) {
       html += '<h3 class="hits-title">該当しそうなポイント（' + hits.length + '件）</h3>';
       html += high.concat(mid).map(function (h) {
@@ -146,22 +205,36 @@
       }).join("");
     }
 
-    // 読み取り結果（確認用）
-    var shown = rawText.trim() ? escapeHtml(rawText.trim()) : "（文字を読み取れませんでした。画像が不鮮明・装飾的だと読めない場合があります）";
-    html += '<details class="ocrtext"><summary>読み取った文字を見る（OCR結果の確認用）</summary><pre>' + shown + '</pre></details>';
+    // 編集可能な判定対象テキスト（OCRミスを直して再判定できる）
+    html += '<div class="ocredit-wrap">' +
+        '<label class="kw-label" for="ocrEdit">判定に使った文字（間違っていれば直して「再判定」できます）</label>' +
+        '<textarea id="ocrEdit" class="ocr-edit">' + escapeHtml(rawText.trim()) + '</textarea>' +
+        '<button type="button" id="recheck" class="btn btn-primary">✏️ この内容で再判定</button>' +
+      '</div>';
 
-    // 再掲の注意
     html += '<div class="disclaimer small">⚠️ この結果は断定ではありません。文字以外の示唆や文脈は判定できていません。最終判断は原典・所轄・遊協にご確認ください。</div>';
 
     $result.innerHTML = html;
     $result.hidden = false;
+
+    var rc = document.getElementById("recheck");
+    if (rc) rc.addEventListener("click", function () {
+      var v = document.getElementById("ocrEdit").value;
+      analyze(v);
+    });
+
     $result.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  // 全角→半角・カタカナ正規化など（NFKCで丸数字や全角英数も吸収）
+  // 空白除去・NFKC・小文字（部分一致用）
   function normalize(s) {
     try { s = s.normalize("NFKC"); } catch (e) {}
     return s.replace(/\s+/g, "").toLowerCase();
+  }
+  // 構造保持の正規化（正規表現用）
+  function nfkcLower(s) {
+    try { s = s.normalize("NFKC"); } catch (e) {}
+    return s.toLowerCase();
   }
 
   function escapeHtml(s) {
