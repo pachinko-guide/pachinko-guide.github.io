@@ -29,6 +29,8 @@
       結果はOK/NGの断定ではありません。<strong>最終判断は必ず原典（ガイドライン）と所轄・遊協にご確認ください。</strong>
     </div>
 
+    <h2 class="mode-h">🖼️ 画像で判定する</h2>
+
     <!-- アップロード -->
     <section id="drop" class="dropzone">
       <input type="file" id="file" accept="image/*" hidden>
@@ -61,6 +63,17 @@
 
     <!-- 結果 -->
     <section id="result" hidden></section>
+
+    <hr class="mode-sep">
+
+    <!-- 状況相談（文章で質問） -->
+    <h2 class="mode-h">💬 状況を相談する（文章で質問）</h2>
+    <p class="consult-lead">「こういう広告はNG？」という状況を文章で入力すると、該当しそうなルールと根拠（Q&A・是正事例・本文）を提示します。AIではなくルールに基づく一次チェックです。</p>
+    <section id="consult" class="consult-box">
+      <textarea id="consultInput" placeholder="例：北斗の拳を6月20日〜6月28日おすすめと出している時に、6月22日からジャグラーおすすめを追加するのはNG？"></textarea>
+      <button type="button" id="consultRun" class="btn btn-primary">相談する</button>
+      <div id="consultResult" hidden></div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -74,7 +87,11 @@
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- ルール辞書 -->
   <script src="data/check_rules.js"></script>
+  <!-- 状況相談シナリオ -->
+  <script src="data/consult.js"></script>
   <!-- チェック本体 -->
   <script src="assets/check.js"></script>
+  <!-- 状況相談 -->
+  <script src="assets/consult.js"></script>
 </body>
 </html>
