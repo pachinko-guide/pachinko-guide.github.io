@@ -18,13 +18,23 @@
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     padding: 26px 24px 28px; text-align: center; border-bottom: 2px solid #e94560;
   }
-  .topnav { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:16px; }
+  .topnav { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-bottom:18px; }
   .topnav a {
-    color:rgba(255,255,255,.85); text-decoration:none; font-size:.84rem; font-weight:600;
-    padding:6px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.3); transition:all .12s;
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    min-width:160px; flex:1 1 160px; max-width:230px; text-align:center;
+    color:#fff; text-decoration:none; padding:11px 16px; border-radius:13px;
+    background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.32);
+    transition:transform .14s, background .14s, box-shadow .14s;
   }
-  .topnav a:hover { background:rgba(255,255,255,.15); }
-  .topnav a.active { background:#e94560; border-color:#e94560; color:#fff; }
+  .topnav a:hover { background:rgba(233,69,96,.22); border-color:#e94560; transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.35); }
+  .topnav a.active { background:#e94560; border-color:#e94560; color:#fff; box-shadow:0 5px 16px rgba(233,69,96,.4); }
+  .topnav .nav-t { font-weight:800; font-size:.98rem; }
+  .topnav .nav-d { font-size:.72rem; opacity:.82; font-weight:500; }
+  @media(max-width:560px){
+    .topnav a{ min-width:0; flex:1 1 46%; padding:9px 8px; }
+    .topnav .nav-t{ font-size:.88rem; }
+    .topnav .nav-d{ font-size:.66rem; }
+  }
   header h1 { font-size: 1.7rem; color: #fff; margin-bottom: 8px; }
   header p  { color: #a0aec0; font-size: 0.9rem; }
 
@@ -114,9 +124,9 @@
 
 <header>
   <nav class="topnav">
-    <a href="index.html">🔍 検索DB</a>
-    <a href="check.html">🧪 広告セルフチェック</a>
-    <a href="gyokai.html" class="active">🗺️ 業界マップ</a>
+    <a href="index.html"><span class="nav-t">🔍 検索DB</span><span class="nav-d">条文・Q&A・是正事例を検索</span></a>
+    <a href="check.html"><span class="nav-t">🧪 広告セルフチェック</span><span class="nav-d">画像で違反を自己点検</span></a>
+    <a href="gyokai.html" class="active"><span class="nav-t">🗺️ 業界マップ</span><span class="nav-d">団体の全体図・相関図</span></a>
   </nav>
   <h1>🎰 パチンコ業界 団体・関係者マップ</h1>
   <p>警察 ／ メーカー ／ 販社 ／ ホール ／ 業界横断団体 ／ 政治団体 ／ ユーザー — 全関係者の役割と相関</p>

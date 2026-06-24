@@ -31,14 +31,26 @@ body{
   background:linear-gradient(135deg,var(--brand),var(--brand-dark));
   color:#fff;padding:28px 0 24px;
 }
-.topnav{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.topnav{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
 .topnav a{
-  color:rgba(255,255,255,.85);text-decoration:none;
-  font-size:.85rem;font-weight:600;padding:5px 13px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.3);transition:all .12s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:160px;flex:1 1 160px;max-width:230px;
+  padding:11px 16px;border-radius:13px;text-align:center;
+  color:#fff;text-decoration:none;
+  background:rgba(255,255,255,.13);
+  border:1.5px solid rgba(255,255,255,.45);
+  transition:transform .14s, background .14s, box-shadow .14s;
 }
-.topnav a:hover{background:rgba(255,255,255,.15)}
-.topnav a.active{background:#fff;color:var(--brand-dark);border-color:#fff}
+.topnav a:hover{background:rgba(255,255,255,.26);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.topnav a.active{background:#fff;border-color:#fff;color:var(--brand-dark);box-shadow:0 5px 16px rgba(0,0,0,.18)}
+.topnav .nav-t{font-weight:800;font-size:.98rem;letter-spacing:.01em}
+.topnav .nav-d{font-size:.72rem;opacity:.9;font-weight:500}
+.topnav a.active .nav-d{opacity:.72}
+@media(max-width:560px){
+  .topnav a{min-width:0;flex:1 1 46%;padding:9px 8px}
+  .topnav .nav-t{font-size:.88rem}
+  .topnav .nav-d{font-size:.66rem}
+}
 
 .site-header h1{margin:0 0 6px;font-size:1.45rem;letter-spacing:.02em}
 .site-header .lead{margin:0;font-size:.92rem;opacity:.95}
