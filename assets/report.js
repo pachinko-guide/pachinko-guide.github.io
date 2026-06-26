@@ -54,15 +54,20 @@
     }
   };
   function fallback(txt, msg) {
-    try {
-      var ta = document.createElement("textarea");
-      ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
-      document.body.appendChild(ta); ta.focus(); ta.select();
-      var ok = document.execCommand("copy");
-      document.body.removeChild(ta);
-      msg.textContent = ok ? "✅ コピーしました。担当者にお送りください。" : "コピーできませんでした。手動で選択してください。";
-    } catch (e) {
-      msg.textContent = "コピーできませんでした。手動で選択してください。";
+    // 失敗時：内容を選択可能な枠で表示し、手動コピーできるようにする
+    var form = msg.closest(".report-form") || document;
+    var out = form.querySelector(".report-output");
+    if (!out) {
+      out = document.createElement("textarea");
+      out.className = "report-output"; out.readOnly = true;
+      form.appendChild(out);
     }
+    out.value = txt; out.hidden = false;
+    out.focus(); out.select();
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch (e) {}
+    msg.textContent = ok
+      ? "✅ コピーしました。担当者にお送りください。"
+      : "👇 下の枠の内容を選択してコピーし、担当者にお送りください。";
   }
 })();
