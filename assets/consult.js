@@ -82,9 +82,14 @@
     }
 
     html += '<div class="disclaimer small">⚠️ これはルールに基づく一次的な目安で、最終判断ではありません。表現の組み合わせや図柄など、文章だけでは判断できない要素もあります。実施前に必ず原典（ガイドライン）と所轄・遊協にご確認ください。</div>';
+    if (window.REPORT) html += window.REPORT.html();
 
     $out.innerHTML = html;
     $out.hidden = false;
+    if (window.REPORT) window.REPORT.wire($out, function () {
+      return { kind: "状況相談", input: text,
+               result: level + (hits.length ? (" / 該当: " + hits.map(function (h) { return h.title; }).join("、")) : "") };
+    });
     $out.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 

@@ -253,6 +253,23 @@ body{
 .consult-refs{display:flex;flex-direction:column;gap:4px;margin-top:6px}
 .consult-refs .hit-link{font-size:.84rem}
 
+/* 判定の報告ブロック */
+.report-block{margin-top:14px;text-align:center}
+.report-toggle{
+  border:1px solid var(--line);background:#fff;color:var(--ink-sub);
+  font-size:.82rem;padding:6px 14px;border-radius:999px;cursor:pointer;
+}
+.report-toggle:hover{border-color:var(--case);color:var(--case)}
+.report-form{margin-top:10px;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.report-form .report-note{
+  width:100%;min-height:60px;padding:9px 11px;border:1.5px solid var(--line);border-radius:8px;
+  font-size:.88rem;font-family:inherit;line-height:1.6;color:var(--ink);resize:vertical;
+}
+.report-form .report-note:focus{outline:none;border-color:var(--brand)}
+.report-actions{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
+.report-msg{font-size:.82rem;color:var(--brand-dark);font-weight:700}
+.report-hint{font-size:.76rem;color:var(--ink-sub);margin:8px 0 0;line-height:1.6}
+
 .btn{
   border:1.5px solid var(--line);background:#fff;color:var(--ink);
   padding:8px 16px;border-radius:9px;font-size:.9rem;font-weight:600;cursor:pointer;

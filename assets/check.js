@@ -213,9 +213,15 @@
       '</div>';
 
     html += '<div class="disclaimer small">⚠️ この結果は断定ではありません。文字以外の示唆や文脈は判定できていません。最終判断は原典・所轄・遊協にご確認ください。</div>';
+    if (window.REPORT) html += window.REPORT.html();
 
     $result.innerHTML = html;
     $result.hidden = false;
+
+    if (window.REPORT) window.REPORT.wire($result, function () {
+      return { kind: "画像/文字判定", input: rawText,
+               result: level + (hits.length ? (" / 該当: " + hits.map(function (h) { return h.rule.label; }).join("、")) : "") };
+    });
 
     var rc = document.getElementById("recheck");
     if (rc) rc.addEventListener("click", function () {
