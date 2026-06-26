@@ -340,4 +340,11 @@ mark{background:#fff3a3;color:inherit;padding:0 1px;border-radius:2px}
   .site-header h1{font-size:1.2rem}
   .filter-label{min-width:auto;width:100%}
   .card-title{font-size:.96rem}
+  /* iOSはフォーム文字が16px未満だとフォーカス時に自動ズームする→16pxに固定 */
+  .search-box input,#categorySelect,#consultInput,#textInput,.report-note,.ocr-edit,.textbox textarea{font-size:16px}
+  /* タップしやすく */
+  .chip{padding:7px 14px;font-size:.86rem}
+  #categorySelect{padding:11px 12px}
+  .card-toggle{padding:9px 4px 4px}
+  .hit-link,.xlink,.glink,.report-toggle{padding-top:6px;padding-bottom:6px}
 }
