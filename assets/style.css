@@ -269,6 +269,16 @@ body{
 .report-actions{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap}
 .report-msg{font-size:.82rem;color:var(--brand-dark);font-weight:700}
 .report-hint{font-size:.76rem;color:var(--ink-sub);margin:8px 0 0;line-height:1.6}
+
+/* 禁止ワード早見表 */
+.ngwrap{display:flex;flex-direction:column;gap:12px}
+.ngwords{display:flex;flex-wrap:wrap;gap:7px;margin:4px 0 10px}
+.ngw{
+  font-size:.86rem;background:var(--case-bg);color:#9c3417;border:1px solid #f0b9a8;
+  padding:3px 10px;border-radius:7px;font-weight:600;
+}
+.hitcard.mid .ngw{background:#fdf0d2;color:#8a6314;border-color:#eccb86}
+.ngw-hit{outline:2px solid var(--case);outline-offset:1px}
 .report-output{
   width:100%;min-height:120px;margin-top:8px;padding:9px 11px;
   border:1.5px solid var(--line);border-radius:8px;font-size:.8rem;
