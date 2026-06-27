@@ -211,8 +211,8 @@
       im.addEventListener("click", function (e) { e.stopPropagation(); openLightbox(im.src); });
     });
 
-    // 検索中は自動で開く
-    if (terms.length) el.classList.add("open");
+    // 検索中は自動で開く（関連項目も埋める）
+    if (terms.length) { el.classList.add("open"); fillRelated(el, r); }
     return el;
   }
 
