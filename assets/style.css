@@ -279,6 +279,22 @@ body{
 }
 .hitcard.mid .ngw{background:#fdf0d2;color:#8a6314;border-color:#eccb86}
 .ngw-hit{outline:2px solid var(--case);outline-offset:1px}
+
+/* 関連項目 */
+.related{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.related .refs-label{display:block;margin-bottom:2px}
+.rel-item{
+  display:flex;align-items:center;gap:8px;text-decoration:none;
+  padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;
+}
+.rel-item:hover{border-color:var(--brand);background:#f4f8ff}
+.rel-badge{font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:5px;flex-shrink:0}
+.rel-badge.qa{background:var(--qa-bg);color:var(--brand-dark)}
+.rel-badge.case{background:var(--case-bg);color:#b23a22}
+.rel-badge.guideline{background:#e6f6ec;color:#1f7a45}
+.rel-badge.appendix{background:#efe9fb;color:#5a37a8}
+.rel-t{font-size:.85rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card.flash{box-shadow:0 0 0 3px var(--brand),0 0 22px rgba(37,99,216,.35)}
 .report-output{
   width:100%;min-height:120px;margin-top:8px;padding:9px 11px;
   border:1.5px solid var(--line);border-radius:8px;font-size:.8rem;

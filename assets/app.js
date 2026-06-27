@@ -17,6 +17,36 @@
     appendix:  { label: "別紙（具体例）",   cls: "appendix",  imgLabel: "具体例の図版（別紙の該当ページ）" }
   };
 
+  // ---- 関連項目の算出（キーワード・分類・参照条文の近さ） ----
+  var VOCAB = ["時差開店","おすすめ","設定","高設定","記念日","周年","創業","就任","リニューアル",
+    "リフレッシュオープン","取材","来店","公約","インフルエンサー","賞品入荷","景品","入荷","出玉",
+    "差枚","ランキング","合算","コンプリート","レインボー","キリン","隠語","メンテナンス","天井",
+    "時速","駐車場","新台","当たり絵柄","ステマ","三店","誕生日","グランドオープン","遊技結果",
+    "営業時間","遊技機性能","総付景品","設定示唆","おすすめ機種"];
+  function _norm(s){ try{ s = s.normalize("NFKC"); }catch(e){} return String(s).replace(/\s+/g,"").toLowerCase(); }
+  function _normRef(s){ return _norm(s).replace(/[（）()【】「」・]/g,""); }
+  RECORDS.forEach(function (r) {
+    var bag = _norm([r.title, r.body, r.category, (r.keywords||[]).join(" ")].join(" "));
+    r._terms = VOCAB.filter(function (t) { return bag.indexOf(_norm(t)) !== -1; });
+    r._refs = (r.refs||[]).map(_normRef);
+  });
+  function relatedFor(r) {
+    var scored = [];
+    for (var i = 0; i < RECORDS.length; i++) {
+      var o = RECORDS[i]; if (o.id === r.id) continue;
+      var shared = 0, k;
+      for (k = 0; k < r._terms.length; k++) if (o._terms.indexOf(r._terms[k]) !== -1) shared++;
+      var refov = 0;
+      for (k = 0; k < r._refs.length; k++) if (o._refs.indexOf(r._refs[k]) !== -1) refov++;
+      var score = shared * 2 + refov * 3 + (o.category === r.category ? 2 : 0);
+      if (score > 0) scored.push({ o: o, score: score });
+    }
+    scored.sort(function (a, b) { return b.score - a.score; });
+    return scored.slice(0, 5).map(function (x) { return x.o; });
+  }
+  function recById(id) { for (var i = 0; i < RECORDS.length; i++) if (RECORDS[i].id === id) return RECORDS[i]; return null; }
+  function cssEsc(s) { return (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/["\\]/g, "\\$&"); }
+
   // ---- DOM ----
   var $q = document.getElementById("q");
   var $clear = document.getElementById("clear");
@@ -163,12 +193,17 @@
         (isQa ? '<span class="answer-label">回答</span>' : '') +
         '<p class="desc">' + hl(r.body || "", terms) + '</p>' +
         imgHtml + catTag + refsHtml +
+        '<div class="related-slot"></div>' +
       '</div>' +
       '<span class="card-toggle">詳しく見る</span>';
 
     el.innerHTML = head + title + body;
+    el.dataset.recId = r.id;
 
-    var toggle = function () { el.classList.toggle("open"); };
+    var toggle = function () {
+      el.classList.toggle("open");
+      if (el.classList.contains("open")) fillRelated(el, r);
+    };
     el.querySelector(".card-title").addEventListener("click", toggle);
     el.querySelector(".card-toggle").addEventListener("click", toggle);
     // サムネクリックで拡大（カードの開閉とは独立）
@@ -179,6 +214,50 @@
     // 検索中は自動で開く
     if (terms.length) el.classList.add("open");
     return el;
+  }
+
+  /* ---------------- 関連項目の表示・ジャンプ ---------------- */
+  function fillRelated(el, r) {
+    var slot = el.querySelector(".related-slot");
+    if (!slot || slot.dataset.done) return;
+    slot.dataset.done = "1";
+    var rel = relatedFor(r);
+    if (!rel.length) return;
+    slot.innerHTML = '<div class="related"><span class="refs-label">🔗 関連する項目</span>' +
+      rel.map(function (o) {
+        var m = TYPE_META[o.type] || TYPE_META.case;
+        return '<a class="rel-item" href="#" data-rel="' + escapeHtml(o.id) + '">' +
+            '<span class="rel-badge ' + m.cls + '">' + escapeHtml(m.label) + '</span>' +
+            '<span class="rel-t">' + (o.no ? escapeHtml(o.no) + " " : "") + escapeHtml(o.title) + '</span></a>';
+      }).join("") + '</div>';
+    slot.querySelectorAll(".rel-item").forEach(function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault(); e.stopPropagation();
+        showRecord(a.getAttribute("data-rel"));
+      });
+    });
+  }
+
+  function showRecord(id) {
+    var sel = '.card[data-rec-id="' + cssEsc(id) + '"]';
+    var target = $results.querySelector(sel);
+    if (!target) {
+      // 現在の絞り込みに無い → 全件表示に戻して出す
+      state.q = ""; $q.value = ""; state.type = "all"; state.source = "all"; state.category = "all";
+      setActive($typeChips, $typeChips.querySelector('[data-type="all"]'));
+      setActive($sourceChips, $sourceChips.querySelector('[data-source="all"]'));
+      refreshCategoryOptions();
+      render();
+      target = $results.querySelector(sel);
+    }
+    if (!target) return;
+    target.classList.add("open");
+    fillRelated(target, recById(id));
+    target.scrollIntoView({ behavior: "smooth", block: "center" });
+    target.classList.remove("flash");
+    void target.offsetWidth;
+    target.classList.add("flash");
+    setTimeout(function () { target.classList.remove("flash"); }, 2000);
   }
 
   /* ---------------- 画像の拡大表示（ライトボックス） ---------------- */
