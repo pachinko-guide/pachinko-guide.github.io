@@ -94,14 +94,25 @@
   }
 
   // 文中の機種名の数（重複除く）
+  // ※「アイムジャグラー」と「ジャグラー」、「エヴァンゲリオン」と「エヴァ」のように
+  //   名前が重なる場合は、同じ場所の出現を1機種として数える（長い名前を優先）。
   function countMachines(loose) {
-    var list = window.CONSULT_MACHINES || [];
-    var seen = {};
+    var list = (window.CONSULT_MACHINES || []).slice()
+      .sort(function (a, b) { return b.length - a.length; }); // 長い順
+    var spans = [];   // 採用済みの出現位置 [start, end]
+    var names = {};   // 採用された機種名
     list.forEach(function (m) {
       var k = nfkcLower(m);
-      if (k && loose.indexOf(k) !== -1) seen[k] = 1;
+      if (!k) return;
+      var idx = loose.indexOf(k);
+      while (idx !== -1) {
+        var end = idx + k.length;
+        var overlap = spans.some(function (s) { return idx < s[1] && end > s[0]; });
+        if (!overlap) { spans.push([idx, end]); names[k] = 1; }
+        idx = loose.indexOf(k, idx + 1);
+      }
     });
-    return Object.keys(seen).length;
+    return Object.keys(names).length;
   }
   // 文中の日付表現の数
   function countDates(loose) {

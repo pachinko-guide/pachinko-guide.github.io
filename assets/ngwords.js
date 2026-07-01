@@ -36,8 +36,8 @@
       totalWords += showWords.length; shownCards++;
 
       var badge = r.risk === "high"
-        ? '<span class="rbadge high">禁止</span>'
-        : '<span class="rbadge mid">要注意</span>';
+        ? '<span class="rbadge high">違反リスク高</span>'
+        : '<span class="rbadge mid">条件次第・要注意</span>';
       var chips = showWords.map(function (w) {
         var hl = (f && norm(w).indexOf(f) !== -1) ? " ngw-hit" : "";
         return '<span class="ngw' + hl + '">' + esc(w) + '</span>';
