@@ -48,5 +48,18 @@ window.CASE_IMAGES = {
   "c6-18": ["assets/images/c6-p18.jpg"],
   "c6-19": ["assets/images/c6-p18.jpg"],
   "c6-20": ["assets/images/c6-p19.jpg"],
-  "c6-21": ["assets/images/c6-p20.jpg"]
+  "c6-21": ["assets/images/c6-p20.jpg"],
+  "c7-01": ["assets/images/c7-p03.jpg"],
+  "c7-02": ["assets/images/c7-p04.jpg"],
+  "c7-03": ["assets/images/c7-p05.jpg"],
+  "c7-04": ["assets/images/c7-p06.jpg"],
+  "c7-05": ["assets/images/c7-p07.jpg"],
+  "c7-06": ["assets/images/c7-p08.jpg"],
+  "c7-07": ["assets/images/c7-p09.jpg"],
+  "c7-08": ["assets/images/c7-p10.jpg"],
+  "c7-09": ["assets/images/c7-p11.jpg"],
+  "c7-10": ["assets/images/c7-p12.jpg"],
+  "c7-11": ["assets/images/c7-p13.jpg"],
+  "c7-12": ["assets/images/c7-p14.jpg"],
+  "c7-13": ["assets/images/c7-p15.jpg"]
 };
